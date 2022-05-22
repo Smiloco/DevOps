@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: chat-app
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         image: smiloco/chatapi:latest
         ports:
           - containerPort: 3000
