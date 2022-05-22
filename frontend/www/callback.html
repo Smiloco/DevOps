@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DevOpsChatApp</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <h1>Loading...</h1>
+        <script>
+            $(document).ready(() => {
+                const urlSearchParams = new URLSearchParams(window.location.search);
+                const {code} = Object.fromEntries(urlSearchParams.entries());
+
+                $.ajax('/auth/exchange-code-for-token', {
+                    data: JSON.stringify({code}),
+                    contentType: 'application/json',
+                    type: 'POST',
+                    success: function(data) {
+                        window.location.href = '/chatroom.html';
+                        // console.log('ok', data);
+                        // document.getElementById("result").innerText = JSON.stringify(data);
+                    }
+                });
+            })
+        </script>
+    </body>
+</html>

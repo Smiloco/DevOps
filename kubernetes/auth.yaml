@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-app
+spec:
+  selector:
+    matchLabels:
+      app: auth-app
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+      - name: auth-app
+        imagePullPolicy: IfNotPresent
+        image: auth:latest
+        ports:
+          - containerPort: 3000
+            name: auth-port
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+spec:
+  selector:
+    app: auth-app
+  ports:
+  - name: auth
+    protocol: TCP
+    port: 3000
+    targetPort: auth-port

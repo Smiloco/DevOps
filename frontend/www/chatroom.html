@@ -1,0 +1,115 @@
+<!Doctype html>
+<html>
+  <head>
+    <title>DevOpsChatApp</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      #messageBox {
+        min-height: 350px;
+        height: 350px;
+        overflow: scroll;
+        margin: 20px;
+        border: 1px solid orange;
+      }
+      #sendBox {
+        margin: 20px;
+        border: 1px solid green; 
+      }
+      #sendMessage {
+        width: 100%;
+      }
+      #sendMessageButton {
+        float: right;
+      }
+      .meMessage {
+        background-color: lightgreen;
+        text-align: right;
+        padding: 3px;
+      }
+      .otherMessage {
+        background-color: lightgray;
+        padding: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chatroom</h1>
+
+    <div>
+      Author: <input type="text" id="authorName"> 
+    </div>
+    <div id="messageBox">
+      Hier komen de chats
+    </div>
+
+    <div id="sendBox">
+      <div>
+        <input type="text" id="sendMessage" >
+      </div>
+      <div>
+        <button id="sendMessageButton">Verstuur bericht</button>
+      </div>
+
+    </div>
+    
+    <script>
+      $(document).ready(() => {
+        $("#sendMessageButton").click(sendMessage);
+        refresh();
+        setInterval(refresh, 10000);
+      })
+
+
+      function sendMessage() {
+        const author = $('#authorName').val();
+        const message = $('#sendMessage').val();
+
+        const messageBox = $('#messageBox');
+        messageBox.append(createMessageDiv({author, message}));
+        messageBox.scrollTop(function() { return this.scrollHeight; });
+        $('#sendMessage').val('');
+
+        $.ajax({
+          type: 'POST',
+          url: '/chat/send',
+          data: JSON.stringify({author, message}),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: () => {}
+        });
+      }
+
+      function refresh() {
+        $.ajax({
+          type: 'GET',
+          url: '/chat/receive',
+          contentType: 'application/json',
+          success: updateMessageBox
+        })
+      }
+      function updateMessageBox(data) {
+        const messageBox = $('#messageBox');
+        messageBox.empty();
+        if (data.length === 0) {
+          messageBox.append('<p>Deze chatbox is nog leeg');
+          return;
+        }
+        for (let message of data) {
+          messageBox.append(createMessageDiv(message));
+        }
+        messageBox.scrollTop(function() { return this.scrollHeight; });
+      }
+      function createMessageDiv(message) {
+        const author = $('#authorName').val();
+        const div = $('<div></div>')
+        if (message.author === author) {
+          div.addClass('meMessage').html(message.message)
+        } else {
+          div.addClass('otherMessage').html(message.author + ': ' + message.message);
+        }
+        return div;
+      }
+    </script>
+  </body>
+</html>

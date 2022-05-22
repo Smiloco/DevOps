@@ -1,0 +1,25 @@
+version: "3.3" 
+services:
+  auth:
+    build: 
+      dockerfile: ./Dockerfile
+      context: authAPI
+    
+    container_name: auth
+    restart: unless-stopped
+
+  chat:
+    build: 
+      dockerfile: ./Dockerfile
+      context: chatAPI
+
+    container_name: chat
+    restart: unless-stopped
+
+  reverse-proxy:
+    container_name: reverse-proxy
+    build: 
+      dockerfile: ./Dockerfile
+      context: frontend
+    ports:
+      - "80:80"
