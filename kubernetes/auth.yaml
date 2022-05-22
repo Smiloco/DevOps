@@ -14,7 +14,7 @@ spec:
       containers:
       - name: auth-app
         imagePullPolicy: IfNotPresent
-        image: smiloco/auth:latest
+        image: smiloco/authapi:latest
         ports:
           - containerPort: 3000
             name: auth-port
